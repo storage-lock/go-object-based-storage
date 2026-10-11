@@ -2,6 +2,7 @@ package object_based_storage
 
 import (
 	"context"
+	"time"
 
 	s3_storage "github.com/storage-lock/go-s3-storage"
 	"github.com/storage-lock/go-storage"
@@ -28,4 +29,8 @@ func (x *ObjectBasedStorage) GetName() string {
 
 func (x *ObjectBasedStorage) Capabilities() []storage.StorageCapability {
 	return x.S3Storage.Capabilities()
+}
+
+func (x *ObjectBasedStorage) Watch(ctx context.Context, lockId string) (<-chan *storage.LockInformation, error) {
+	return storage.NewPollingLockWatcher(x, 500*time.Millisecond).Watch(ctx, lockId)
 }
